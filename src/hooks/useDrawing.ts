@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { shapesAtom, PathShape } from "../atoms";
 import type { ViewBox } from "./useViewBox";
 import type { Point } from "../lib/svgCoordinates";
@@ -19,7 +19,7 @@ export const useDrawing = (
 ) => {
 	const [isDrawing, setIsDrawing] = useState(false);
 	const drawingPointsRef = useRef<Point[]>([]);
-	const [shapes, setShapes] = useAtom(shapesAtom);
+	const setShapes = useSetAtom(shapesAtom);
 
 	// Setup canvas size
 	useEffect(() => {
@@ -109,6 +109,5 @@ export const useDrawing = (
 		startDrawing,
 		continueDrawing,
 		finishDrawing,
-		shapes,
 	};
 };

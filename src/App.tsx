@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { DebugOverlay } from "./DebugOverlay";
 import { ToolsOverlay } from "./ToolsOverlay";
 import { useAtom, useAtomValue } from "jotai";
-import { darkModeAtom, toolAtom, type Shape } from "./atoms";
+import { darkModeAtom, shapesAtom, toolAtom, type Shape } from "./atoms";
 import { Whiteboard } from "./components/Whiteboard";
 import { DrawingCanvas } from "./components/DrawingCanvas";
 import { useViewBox } from "./hooks/useViewBox";
@@ -10,6 +10,7 @@ import { useMousePosition } from "./hooks/useMousePosition";
 import { useDrawing } from "./hooks/useDrawing";
 import { MIDDLE_CLICK, getCursor } from "./lib/eventHandlers";
 import { useErasing } from "./hooks/useErasing";
+import { useDrawRectangle } from "./hooks/useDrawRectangle";
 
 function App() {
 	const [darkMode] = useAtom(darkModeAtom);
@@ -22,10 +23,18 @@ function App() {
 	const { viewBox, handlePan, handleZoom, viewBoxString } = useViewBox();
 	const { mousePositionDisplay, updateMousePosition, getMouseInSvgSpace } =
 		useMousePosition(svgRef);
-	const { isDrawing, startDrawing, continueDrawing, finishDrawing, shapes } =
+	const { isDrawing, startDrawing, continueDrawing, finishDrawing } =
 		useDrawing(canvasRef, svgRef, viewBox, darkMode);
-	const { isErasing, startErasing, stopErasing, eraseShape } =
-		useErasing(svgRef, viewBox);
+	const { isErasing, startErasing, stopErasing, eraseShape } = useErasing(
+		svgRef,
+		viewBox,
+	);
+	const {
+		isDrawingRectangle,
+		startDrawingRectangle,
+		continueDrawingRectangle,
+		finishDrawingRectangle,
+	} = useDrawRectangle(svgRef);
 
 	const onMouseDown = useCallback(
 		(e: React.MouseEvent<SVGSVGElement>) => {
@@ -42,19 +51,31 @@ function App() {
 			if (tool === "eraser") {
 				startErasing();
 			}
+			if (tool === "rectangle") {
+				const point = getMouseInSvgSpace(e.clientX, e.clientY);
+				if (point) {
+					startDrawingRectangle(point);
+				}
+			}
 		},
-		[tool, startDrawing, startErasing, getMouseInSvgSpace],
+		[
+			tool,
+			startDrawing,
+			startErasing,
+			startDrawingRectangle,
+			getMouseInSvgSpace,
+		],
 	);
 
 	const onMouseUp = useCallback(() => {
-		if (isPanning) {
-			setIsPanning(false);
-		}
-		if (isErasing) {
-			stopErasing();
-		}
+		setIsPanning(false);
+
+		stopErasing();
+
+		finishDrawingRectangle();
+
 		finishDrawing();
-	}, [isPanning, finishDrawing, isErasing, stopErasing]);
+	}, [finishDrawing, stopErasing, finishDrawingRectangle]);
 
 	const onMouseMove = useCallback(
 		(e: React.MouseEvent<SVGSVGElement>) => {
@@ -69,6 +90,15 @@ function App() {
 				}
 			}
 
+			if (isDrawingRectangle) {
+				const keepSquare = e.shiftKey;
+
+				const point = getMouseInSvgSpace(e.clientX, e.clientY);
+				if (point) {
+					continueDrawingRectangle(point, keepSquare);
+				}
+			}
+
 			// Handle panning
 			if (MIDDLE_CLICK(e)) {
 				handlePan(e.movementX, e.movementY);
@@ -76,11 +106,13 @@ function App() {
 		},
 		[
 			isDrawing,
+			isDrawingRectangle,
 			tool,
 			updateMousePosition,
 			getMouseInSvgSpace,
 			continueDrawing,
 			handlePan,
+			continueDrawingRectangle,
 		],
 	);
 
@@ -94,16 +126,20 @@ function App() {
 
 	const cursor = getCursor(isPanning, tool);
 
-	const onShapeMouseOver = useCallback((shape: Shape) => {
-		if (tool === "eraser" && isErasing) {
-			eraseShape(shape);
-		}
-	}, [tool, isErasing, eraseShape]);
+	const onShapeMouseOver = useCallback(
+		(shape: Shape) => {
+			if (tool === "eraser" && isErasing) {
+				eraseShape(shape);
+			}
+		},
+		[tool, isErasing, eraseShape],
+	);
 
 	const onShapeClick = useCallback((shape: Shape) => {
 		console.log("shape click", shape);
-	}, []);	
+	}, []);
 
+	const shapes = useAtomValue(shapesAtom);
 	return (
 		<main
 			className={`h-screen w-screen overflow-hidden bg-background ${darkMode ? "dark" : ""}`}

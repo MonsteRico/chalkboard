@@ -14,7 +14,12 @@ export const darkModeAtom = atomWithStorage<boolean>(
 	},
 );
 
-export type ShapeType = "circle" | "square" | "triangle" | "diamond" | "path";
+export type ShapeType =
+	| "circle"
+	| "rectangle"
+	| "triangle"
+	| "diamond"
+	| "path";
 
 abstract class BaseShape {
 	id: string;
@@ -48,7 +53,6 @@ abstract class BaseShape {
 	setStrokeColor(strokeColor: string) {
 		this.strokeColor = strokeColor;
 	}
-    
 
 	setFillColor(fillColor: string) {
 		this.fillColor = fillColor;
@@ -75,7 +79,7 @@ export class CircleShape extends BaseShape {
 	}
 }
 
-export class SquareShape extends BaseShape {
+export class RectangleShape extends BaseShape {
 	width: number;
 	height: number;
 
@@ -86,17 +90,19 @@ export class SquareShape extends BaseShape {
 		width,
 		height,
 	}: { id: string; x: number; y: number; width: number; height: number }) {
-		super({ id, type: "square", x, y });
+		super({ id, type: "rectangle", x, y });
 		this.width = width;
 		this.height = height;
 	}
 
 	collisionDetectionFn(mouseX: number, mouseY: number): boolean {
+		const negativeWidth = this.width < 0;
+		const negativeHeight = this.height < 0;
 		return (
-			mouseX >= this.x - this.width / 2 &&
-			mouseX <= this.x + this.width / 2 &&
-			mouseY >= this.y - this.height / 2 &&
-			mouseY <= this.y + this.height / 2
+			mouseX >= (this.x + (negativeWidth ? this.width : 0)) - Math.abs(this.width) / 2 &&
+			mouseX <= (this.x + (negativeWidth ? this.width : 0)) + Math.abs(this.width) / 2 &&
+			mouseY >= (this.y + (negativeHeight ? this.height : 0)) - Math.abs(this.height) / 2 &&
+			mouseY <= (this.y + (negativeHeight ? this.height : 0)) + Math.abs(this.height) / 2
 		);
 	}
 }
@@ -168,13 +174,13 @@ export class PathShape extends BaseShape {
 
 	collisionDetectionFn(mouseX: number, mouseY: number): boolean {
 		// Check the distance from the mouse to any point on the path. If the distance is less than the stroke width, return true.
-        return false;
+		return false;
 	}
 }
 
 export type Shape =
 	| CircleShape
-	| SquareShape
+	| RectangleShape
 	| TriangleShape
 	| DiamondShape
 	| PathShape;

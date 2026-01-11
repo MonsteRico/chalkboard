@@ -2,8 +2,8 @@ import type {
 	CircleShape,
 	DiamondShape,
 	PathShape,
+	RectangleShape,
 	Shape,
-	SquareShape,
 	TriangleShape,
 } from "../atoms";
 import { useAtomValue } from "jotai";
@@ -45,14 +45,16 @@ export const ShapeComponent = ({ shape, onMouseOver, onClick }: ShapeProps) => {
 				/>
 			);
 		}
-		case "square": {
-			const squareShape = shape as SquareShape;
+		case "rectangle": {
+			const rectangleShape = shape as RectangleShape;
+			const negativeWidth = rectangleShape.width < 0;
+			const negativeHeight = rectangleShape.height < 0;
 			return (
 				<rect
-					x={squareShape.x - squareShape.width / 2}
-					y={squareShape.y - squareShape.height / 2}
-					width={squareShape.width}
-					height={squareShape.height}
+					x={rectangleShape.x + (negativeWidth ? rectangleShape.width : 0)}
+					y={rectangleShape.y + (negativeHeight ? rectangleShape.height : 0)}
+					width={Math.abs(rectangleShape.width)}
+					height={Math.abs(rectangleShape.height)}
 					fill={fillColor}
 					stroke={strokeColor}
 					strokeWidth="2"
