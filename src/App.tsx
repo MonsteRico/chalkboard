@@ -150,7 +150,6 @@ function App() {
 			/>
 			<div className="relative h-full w-full">
 				<Whiteboard
-					viewBox={viewBox}
 					viewBoxString={viewBoxString}
 					shapes={shapes}
 					svgRef={svgRef}
