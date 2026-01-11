@@ -1,3 +1,4 @@
+import { useAtomValue } from "jotai";
 import type {
 	CircleShape,
 	DiamondShape,
@@ -6,7 +7,6 @@ import type {
 	Shape,
 	TriangleShape,
 } from "../atoms";
-import { useAtomValue } from "jotai";
 import { darkModeAtom } from "../atoms";
 
 interface ShapeProps {

@@ -1,5 +1,3 @@
-import type { ViewBox } from "../hooks/useViewBox";
-
 export interface Point {
 	x: number;
 	y: number;

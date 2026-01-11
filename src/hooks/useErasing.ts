@@ -1,12 +1,11 @@
-import { useState, useCallback } from "react";
 import { useSetAtom } from "jotai";
-import { shapesAtom, type Shape } from "../atoms";
+import { useCallback, useState } from "react";
+import { type Shape, shapesAtom } from "../atoms";
 import type { ViewBox } from "./useViewBox";
-import type { Point } from "../lib/svgCoordinates";
 
 export const useErasing = (
-	svgRef: React.RefObject<SVGSVGElement | null>,
-	viewBox: ViewBox,
+	_svgRef: React.RefObject<SVGSVGElement | null>,
+	_viewBox: ViewBox,
 ) => {
 	const [isErasing, setIsErasing] = useState(false);
 	const setShapes = useSetAtom(shapesAtom);

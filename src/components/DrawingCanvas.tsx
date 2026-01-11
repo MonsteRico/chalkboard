@@ -6,7 +6,7 @@ export const DrawingCanvas = ({ canvasRef }: DrawingCanvasProps) => {
 	return (
 		<canvas
 			ref={canvasRef}
-			className="absolute inset-0 pointer-events-none"
+			className="pointer-events-none absolute inset-0"
 			style={{ mixBlendMode: "normal" }}
 		/>
 	);

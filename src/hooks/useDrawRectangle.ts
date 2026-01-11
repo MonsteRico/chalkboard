@@ -1,10 +1,11 @@
-import {  useState, useCallback, useRef } from "react";
 import { useSetAtom } from "jotai";
-import { shapesAtom, RectangleShape, type Shape } from "../atoms";
+import { useCallback, useRef, useState } from "react";
+import { RectangleShape, type Shape, shapesAtom } from "../atoms";
 import type { Point } from "../lib/svgCoordinates";
 
-
-export const useDrawRectangle = (svgRef: React.RefObject<SVGSVGElement | null>) => {
+export const useDrawRectangle = (
+	_svgRef: React.RefObject<SVGSVGElement | null>,
+) => {
 	const [isDrawingRectangle, setIsDrawingRectangle] = useState(false);
 	const setShapes = useSetAtom(shapesAtom);
 	const [startPoint, setStartPoint] = useState<Point | null>(null);
@@ -34,14 +35,23 @@ export const useDrawRectangle = (svgRef: React.RefObject<SVGSVGElement | null>) 
 			setEndPoint(endPoint);
 			if (!rectangleRef.current || !startPoint) return;
 			if (keepSquare) {
-				const size = Math.min(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+				const size = Math.min(
+					endPoint.x - startPoint.x,
+					endPoint.y - startPoint.y,
+				);
 				rectangleRef.current.width = size;
 				rectangleRef.current.height = size;
 			} else {
 				rectangleRef.current.width = endPoint.x - startPoint.x;
 				rectangleRef.current.height = endPoint.y - startPoint.y;
-			}	
-			setShapes((prev) => prev.map((shape) => shape.id === rectangleRef.current?.id ? rectangleRef.current as Shape : shape));
+			}
+			setShapes((prev) =>
+				prev.map((shape) =>
+					shape.id === rectangleRef.current?.id
+						? (rectangleRef.current as Shape)
+						: shape,
+				),
+			);
 		},
 		[startPoint, setShapes],
 	);
@@ -55,8 +65,7 @@ export const useDrawRectangle = (svgRef: React.RefObject<SVGSVGElement | null>) 
 		setStartPoint(null);
 		setEndPoint(null);
 		rectangleRef.current = null;
-	}, [startPoint, endPoint ]);
-
+	}, [startPoint, endPoint]);
 
 	return {
 		isDrawingRectangle,

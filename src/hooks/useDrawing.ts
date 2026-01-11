@@ -1,15 +1,15 @@
-import { useRef, useState, useEffect, useCallback } from "react";
 import { useSetAtom } from "jotai";
-import { shapesAtom, PathShape } from "../atoms";
-import type { ViewBox } from "./useViewBox";
-import type { Point } from "../lib/svgCoordinates";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PathShape, shapesAtom } from "../atoms";
 import {
-	initializeCanvasDrawing,
-	drawPoint,
 	clearCanvas,
+	drawPoint,
+	initializeCanvasDrawing,
 	setupCanvasDrawing,
 } from "../lib/canvasUtils";
 import { pointsToPathData } from "../lib/pathUtils";
+import type { Point } from "../lib/svgCoordinates";
+import type { ViewBox } from "./useViewBox";
 
 export const useDrawing = (
 	canvasRef: React.RefObject<HTMLCanvasElement | null>,

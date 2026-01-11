@@ -1,16 +1,16 @@
-import { useCallback, useRef, useState } from "react";
-import { DebugOverlay } from "./DebugOverlay";
-import { ToolsOverlay } from "./ToolsOverlay";
 import { useAtom, useAtomValue } from "jotai";
-import { darkModeAtom, shapesAtom, toolAtom, type Shape } from "./atoms";
-import { Whiteboard } from "./components/Whiteboard";
+import { useCallback, useRef, useState } from "react";
+import { darkModeAtom, type Shape, shapesAtom, toolAtom } from "./atoms";
 import { DrawingCanvas } from "./components/DrawingCanvas";
-import { useViewBox } from "./hooks/useViewBox";
-import { useMousePosition } from "./hooks/useMousePosition";
+import { Whiteboard } from "./components/Whiteboard";
+import { DebugOverlay } from "./DebugOverlay";
 import { useDrawing } from "./hooks/useDrawing";
-import { MIDDLE_CLICK, getCursor } from "./lib/eventHandlers";
-import { useErasing } from "./hooks/useErasing";
 import { useDrawRectangle } from "./hooks/useDrawRectangle";
+import { useErasing } from "./hooks/useErasing";
+import { useMousePosition } from "./hooks/useMousePosition";
+import { useViewBox } from "./hooks/useViewBox";
+import { getCursor, MIDDLE_CLICK } from "./lib/eventHandlers";
+import { ToolsOverlay } from "./ToolsOverlay";
 
 function App() {
 	const [darkMode] = useAtom(darkModeAtom);

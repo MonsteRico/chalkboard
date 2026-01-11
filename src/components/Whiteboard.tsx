@@ -1,11 +1,8 @@
-import { useRef } from "react";
+import type { Shape } from "../atoms";
 import { BackgroundGrid } from "../BackgroundGrid";
 import { ShapeComponent } from "./Shape";
-import type { ViewBox } from "../hooks/useViewBox";
-import type { Shape } from "../atoms";
 
 interface WhiteboardProps {
-	viewBox: ViewBox;
 	viewBoxString: string;
 	shapes: Shape[];
 	svgRef: React.RefObject<SVGSVGElement | null>;
@@ -20,7 +17,6 @@ interface WhiteboardProps {
 }
 
 export const Whiteboard = ({
-	viewBox,
 	viewBoxString,
 	shapes,
 	svgRef,
@@ -50,7 +46,12 @@ export const Whiteboard = ({
 			<BackgroundGrid />
 			{/* Render shapes */}
 			{shapes.map((shape) => (
-				<ShapeComponent key={shape.id} shape={shape} onMouseOver={() => onShapeMouseOver(shape)} onClick={() => onShapeClick(shape)} />
+				<ShapeComponent
+					key={shape.id}
+					shape={shape}
+					onMouseOver={() => onShapeMouseOver(shape)}
+					onClick={() => onShapeClick(shape)}
+				/>
 			))}
 		</svg>
 	);

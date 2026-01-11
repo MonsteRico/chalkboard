@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface ViewBox {
 	x: number;
@@ -46,7 +46,10 @@ export const useViewBox = () => {
 			deltaY: number,
 			clientX: number,
 			clientY: number,
-			getMouseInSvgSpace: (x: number, y: number) => { x: number; y: number } | null,
+			getMouseInSvgSpace: (
+				x: number,
+				y: number,
+			) => { x: number; y: number } | null,
 		) => {
 			const mouseInSvgSpace = getMouseInSvgSpace(clientX, clientY);
 			if (!mouseInSvgSpace) return;

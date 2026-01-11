@@ -99,10 +99,16 @@ export class RectangleShape extends BaseShape {
 		const negativeWidth = this.width < 0;
 		const negativeHeight = this.height < 0;
 		return (
-			mouseX >= (this.x + (negativeWidth ? this.width : 0)) - Math.abs(this.width) / 2 &&
-			mouseX <= (this.x + (negativeWidth ? this.width : 0)) + Math.abs(this.width) / 2 &&
-			mouseY >= (this.y + (negativeHeight ? this.height : 0)) - Math.abs(this.height) / 2 &&
-			mouseY <= (this.y + (negativeHeight ? this.height : 0)) + Math.abs(this.height) / 2
+			mouseX >=
+				this.x + (negativeWidth ? this.width : 0) - Math.abs(this.width) / 2 &&
+			mouseX <=
+				this.x + (negativeWidth ? this.width : 0) + Math.abs(this.width) / 2 &&
+			mouseY >=
+				this.y +
+					(negativeHeight ? this.height : 0) -
+					Math.abs(this.height) / 2 &&
+			mouseY <=
+				this.y + (negativeHeight ? this.height : 0) + Math.abs(this.height) / 2
 		);
 	}
 }
@@ -172,7 +178,7 @@ export class PathShape extends BaseShape {
 		this.d = d;
 	}
 
-	collisionDetectionFn(mouseX: number, mouseY: number): boolean {
+	collisionDetectionFn(_mouseX: number, _mouseY: number): boolean {
 		// Check the distance from the mouse to any point on the path. If the distance is less than the stroke width, return true.
 		return false;
 	}
