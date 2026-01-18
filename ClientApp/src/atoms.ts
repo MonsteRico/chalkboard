@@ -1,7 +1,9 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import type { Tool } from "../../shared/types";
 
-export type Tool = "cursor" | "pen" | "eraser" | "rectangle";
+// Re-export Tool for backward compatibility
+export type { Tool };
 
 export const toolAtom = atom<Tool>("cursor");
 
@@ -192,3 +194,6 @@ export type Shape =
 	| PathShape;
 
 export const shapesAtom = atom<Shape[]>([]);
+
+// Connection status: 'connected' | 'local' | 'connecting'
+export const connectionStatusAtom = atom<'connected' | 'local' | 'connecting'>('connecting');

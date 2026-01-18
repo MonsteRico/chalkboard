@@ -16,5 +16,11 @@ export default defineConfig({
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
 		},
+		// Ensure node_modules resolution works for shared directory
+		// Dedupe zod to ensure it's resolved from ClientApp's node_modules
+		dedupe: ["zod"],
 	},
+	// Ensure Vite resolves node_modules from ClientApp root
+	// This is important for resolving dependencies in the shared directory
+	root: __dirname,
 });

@@ -8,9 +8,13 @@ import { useDrawing } from "./hooks/useDrawing";
 import { useDrawRectangle } from "./hooks/useDrawRectangle";
 import { useErasing } from "./hooks/useErasing";
 import { useMousePosition } from "./hooks/useMousePosition";
+import { useUpdateCursorPosition } from "./hooks/useUpdateCursorPosition";
 import { useViewBox } from "./hooks/useViewBox";
 import { getCursor, MIDDLE_CLICK } from "./lib/eventHandlers";
 import { ToolsOverlay } from "./ToolsOverlay";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
+import { Settings } from "./components/Settings";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
 	const [darkMode] = useAtom(darkModeAtom);
@@ -21,8 +25,11 @@ function App() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const { viewBox, handlePan, handleZoom, viewBoxString } = useViewBox();
-	const { mousePositionDisplay, updateMousePosition, getMouseInSvgSpace } =
+	const { mousePositionDisplay, updateMousePosition, getMouseInSvgSpace, getMousePosition } =
 		useMousePosition(svgRef);
+	
+	// Send cursor position updates to server at 30fps
+	useUpdateCursorPosition(getMousePosition);
 	const { isDrawing, startDrawing, continueDrawing, finishDrawing } =
 		useDrawing(canvasRef, svgRef, viewBox, darkMode);
 	const { isErasing, startErasing, stopErasing, eraseShape } = useErasing(
@@ -140,32 +147,35 @@ function App() {
 	}, []);
 
 	const shapes = useAtomValue(shapesAtom);
+
 	return (
-		<main
-			className={`h-screen w-screen overflow-hidden bg-background ${darkMode ? "dark" : ""}`}
-		>
-			<DebugOverlay
-				viewBox={viewBox}
-				mousePositionDisplay={mousePositionDisplay}
-			/>
-			<div className="relative h-full w-full">
-				<Whiteboard
-					viewBoxString={viewBoxString}
-					shapes={shapes}
-					svgRef={svgRef}
-					onMouseDown={onMouseDown}
-					onMouseUp={onMouseUp}
-					onMouseMove={onMouseMove}
-					onMouseLeave={onMouseUp}
-					onWheel={onWheel}
-					cursor={cursor}
-					onShapeMouseOver={onShapeMouseOver}
-					onShapeClick={onShapeClick}
+			<main
+				className={`h-screen w-screen overflow-hidden bg-background ${darkMode ? "dark" : ""}`}
+			>
+				<DebugOverlay
+					viewBox={viewBox}
+					mousePositionDisplay={mousePositionDisplay}
 				/>
-				<DrawingCanvas canvasRef={canvasRef} />
-			</div>
-			<ToolsOverlay />
-		</main>
+				<div className="relative h-full w-full">
+					<Whiteboard
+						viewBoxString={viewBoxString}
+						shapes={shapes}
+						svgRef={svgRef}
+						onMouseDown={onMouseDown}
+						onMouseUp={onMouseUp}
+						onMouseMove={onMouseMove}
+						onMouseLeave={onMouseUp}
+						onWheel={onWheel}
+						cursor={cursor}
+						onShapeMouseOver={onShapeMouseOver}
+						onShapeClick={onShapeClick}
+					/>
+					<DrawingCanvas canvasRef={canvasRef} />
+				</div>
+				<ToolsOverlay />
+				<Settings />
+				<Toaster />
+			</main>
 	);
 }
 

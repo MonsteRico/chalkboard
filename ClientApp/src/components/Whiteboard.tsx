@@ -1,6 +1,7 @@
 import type { Shape } from "../atoms";
 import { BackgroundGrid } from "../BackgroundGrid";
 import { ShapeComponent } from "./Shape";
+import { UserCursors } from "./UserCursors";
 
 interface WhiteboardProps {
 	viewBoxString: string;
@@ -53,6 +54,8 @@ export const Whiteboard = ({
 					onClick={() => onShapeClick(shape)}
 				/>
 			))}
+			{/* Render other users' cursors */}
+			<UserCursors />
 		</svg>
 	);
 };

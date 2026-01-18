@@ -1,0 +1,14 @@
+{
+  "name": "backendapp",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "shadcn": "^3.7.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "zod": "^4.3.5"
+  }
+}
