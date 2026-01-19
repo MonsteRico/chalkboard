@@ -3,7 +3,7 @@
 
 import { shapesAtom, connectionStatusAtom } from "@/atoms";
 import { addUser, getUserById, localUserAtom, removeUser, updateCursorColor, updateCursorPosition, updateDisplayName, usersAtom } from "@/lib/usersAtoms";
-import { deserializeShapes } from "@/lib/shapeUtils";
+import { deserializeShape, deserializeShapes } from "@/lib/shapeUtils";
 import type { SocketMessage, Tool } from "../../../shared/types";
 import { validateSocketMessage } from "../../../shared/types";
 import { useAtom, useSetAtom } from "jotai";
@@ -230,11 +230,17 @@ export function useWebSocket() {
             console.warn("Received CONNECT message from server, this should not happen");
             break;
           case "ADD_SHAPE":
+            setShapes((prev) => [...prev, deserializeShape(data.payload)]);
+            break;
           case "REMOVE_SHAPE":
+            setShapes((prev) => prev.filter((shape) => shape.id !== data.payload.id));
+            break;
           case "UPDATE_SHAPE":
+            setShapes((prev) => prev.map((shape) => shape.id === data.payload.id ? deserializeShape(data.payload) : shape));
+            break;
           case "CLEAR_CANVAS":
-            // TODO: Implement shape message handlers
-            console.warn(`Unhandled message type: ${data.type}`);
+            setShapes([]);
+            toast.info("Canvas cleared");
             break;
         }
       } catch (error) {

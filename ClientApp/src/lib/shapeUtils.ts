@@ -79,3 +79,68 @@ export function deserializeShape(serializable: SerializableShape): Shape {
 export function deserializeShapes(shapes: SerializableShape[]): Shape[] {
 	return shapes.map(deserializeShape);
 }
+
+/**
+ * Convert a Shape class instance to a serializable shape (for WebSocket)
+ */
+export function serializeShape(shape: Shape): SerializableShape {
+	switch (shape.type) {
+		case "circle":
+			return {
+				id: shape.id,
+				type: "circle",
+				x: shape.x,
+				y: shape.y,
+				radius: shape.radius,
+				strokeColor: shape.strokeColor,
+				fillColor: shape.fillColor,
+			};
+
+		case "rectangle":
+			return {
+				id: shape.id,
+				type: "rectangle",
+				x: shape.x,
+				y: shape.y,
+				width: shape.width,
+				height: shape.height,
+				strokeColor: shape.strokeColor,
+				fillColor: shape.fillColor,
+			};
+
+		case "triangle":
+			return {
+				id: shape.id,
+				type: "triangle",
+				x: shape.x,
+				y: shape.y,
+				width: shape.width,
+				height: shape.height,
+				strokeColor: shape.strokeColor,
+				fillColor: shape.fillColor,
+			};
+
+		case "diamond":
+			return {
+				id: shape.id,
+				type: "diamond",
+				x: shape.x,
+				y: shape.y,
+				width: shape.width,
+				height: shape.height,
+				strokeColor: shape.strokeColor,
+				fillColor: shape.fillColor,
+			};
+
+		case "path":
+			return {
+				id: shape.id,
+				type: "path",
+				x: shape.x,
+				y: shape.y,
+				d: shape.d,
+				strokeColor: shape.strokeColor,
+				fillColor: shape.fillColor,
+			};
+	}
+}

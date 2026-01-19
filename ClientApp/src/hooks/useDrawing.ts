@@ -10,6 +10,8 @@ import {
 import { pointsToPathData } from "../lib/pathUtils";
 import type { Point } from "../lib/svgCoordinates";
 import type { ViewBox } from "./useViewBox";
+import { useWebSocketContext } from "@/contexts/WebSocketContext";
+import { serializeShape } from "@/lib/shapeUtils";
 
 export const useDrawing = (
 	canvasRef: React.RefObject<HTMLCanvasElement | null>,
@@ -20,7 +22,7 @@ export const useDrawing = (
 	const [isDrawing, setIsDrawing] = useState(false);
 	const drawingPointsRef = useRef<Point[]>([]);
 	const setShapes = useSetAtom(shapesAtom);
-
+	const { sendUpdate } = useWebSocketContext();
 	// Setup canvas size
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -94,6 +96,11 @@ export const useDrawing = (
 			// Save to shapes
 			setShapes((prev) => [...prev, pathShape]);
 
+			sendUpdate({
+				type: "ADD_SHAPE",
+				payload: serializeShape(pathShape),
+			});
+
 			// Clear canvas
 			const canvas = canvasRef.current;
 			if (canvas) {
@@ -102,7 +109,7 @@ export const useDrawing = (
 
 			drawingPointsRef.current = [];
 		}
-	}, [isDrawing, canvasRef, viewBox, setShapes]);
+	}, [isDrawing, canvasRef, viewBox, setShapes, sendUpdate]);
 
 	return {
 		isDrawing,

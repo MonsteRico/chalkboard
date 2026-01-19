@@ -2,6 +2,8 @@ import { useSetAtom } from "jotai";
 import { useCallback, useRef, useState } from "react";
 import { RectangleShape, type Shape, shapesAtom } from "../atoms";
 import type { Point } from "../lib/svgCoordinates";
+import { serializeShape } from "../lib/shapeUtils";
+import { useWebSocketContext } from "@/contexts/WebSocketContext";
 
 export const useDrawRectangle = (
 	_svgRef: React.RefObject<SVGSVGElement | null>,
@@ -11,6 +13,8 @@ export const useDrawRectangle = (
 	const [startPoint, setStartPoint] = useState<Point | null>(null);
 	const [endPoint, setEndPoint] = useState<Point | null>(null);
 	const rectangleRef = useRef<RectangleShape | null>(null);
+	const { sendUpdate } = useWebSocketContext();
+
 
 	const startDrawingRectangle = useCallback(
 		(startPoint: Point) => {
@@ -26,8 +30,13 @@ export const useDrawRectangle = (
 				height: 0,
 			});
 			setShapes((prev) => [...prev, rectangleRef.current as Shape]);
+			const shape = rectangleRef.current as Shape;
+			sendUpdate({
+				type: "ADD_SHAPE",
+				payload: serializeShape(shape),
+			});
 		},
-		[setShapes],
+		[setShapes, sendUpdate],
 	);
 
 	const continueDrawingRectangle = useCallback(
@@ -52,8 +61,13 @@ export const useDrawRectangle = (
 						: shape,
 				),
 			);
+			const shape = rectangleRef.current as Shape;
+			sendUpdate({
+				type: "UPDATE_SHAPE",
+				payload: serializeShape(shape),
+			});
 		},
-		[startPoint, setShapes],
+		[startPoint, setShapes, sendUpdate],
 	);
 
 	const finishDrawingRectangle = useCallback(() => {

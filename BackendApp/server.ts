@@ -139,6 +139,32 @@ const server = Bun.serve<ClientData>({
           return;
         }
         
+
+        if (message.type === "ADD_SHAPE") {
+          shapes.get(ws.data.roomId)?.add(message.payload);
+        }
+        if (message.type === "REMOVE_SHAPE") {
+          shapes.get(ws.data.roomId)?.delete(message.payload);
+        }
+        if (message.type === "UPDATE_SHAPE") {
+          // Get or initialize the shapes Set for this room
+          if (!shapes.has(ws.data.roomId)) {
+            shapes.set(ws.data.roomId, new Set());
+          }
+          const roomShapes = shapes.get(ws.data.roomId)!;
+          
+          // Find and delete the old shape by ID, then add the updated one
+          for (const shape of roomShapes) {
+            if (shape.id === message.payload.id) {
+              roomShapes.delete(shape);
+              break;
+            }
+          }
+          roomShapes.add(message.payload);
+        }
+        if (message.type === "CLEAR_CANVAS") {
+          shapes.get(ws.data.roomId)?.clear();
+        }
         // Broadcast validated message to the room, excluding the sender
         ws.publish(ws.data.roomId, JSON.stringify(message));
       } catch (error) {
