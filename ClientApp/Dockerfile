@@ -1,46 +1,25 @@
-# Build stage
-FROM oven/bun:latest AS builder
+FROM oven/bun:latest
 
-# Set working directory to match project structure
-WORKDIR /app/ClientApp
+WORKDIR /app
 
-# Accept build argument for backend URL
-ARG VITE_BACKEND_URL=ws://localhost:3000
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-
-# Copy shared types directory (needed for compilation)
-# This maintains the ../../../shared relative path structure
-COPY shared/ /app/shared/
+# Copy shared types (needed for imports)
+COPY shared ./shared
 
 # Copy package files
-COPY ClientApp/package.json ClientApp/bun.lock* ./
+COPY ClientApp/package.json ClientApp/bun.lock* ./ClientApp/
 
 # Install dependencies
+WORKDIR /app/ClientApp
 RUN bun install --frozen-lockfile
 
 # Copy application code
-COPY ClientApp/ .
+COPY ClientApp ./
 
 # Build the application
 RUN bun run build
 
-# Production stage - use a lightweight web server
-FROM nginx:alpine
+# Expose port (default 4173 for vite preview, can be overridden via PORT env var)
+EXPOSE 4173
 
-# Copy built files from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration (optional, for SPA routing)
-RUN echo 'server { \
-    listen 80; \
-    server_name _; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Run vite preview to serve the built app
+CMD ["bun", "run", "preview"]

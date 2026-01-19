@@ -23,4 +23,12 @@ export default defineConfig({
 	// Ensure Vite resolves node_modules from ClientApp root
 	// This is important for resolving dependencies in the shared directory
 	root: __dirname,
+	server: {
+		port: parseInt(process.env.PORT || "5173", 10),
+		host: "0.0.0.0",
+	},
+	preview: {
+		port: parseInt(process.env.PORT || "4173", 10),
+		host: "0.0.0.0",
+	},
 });

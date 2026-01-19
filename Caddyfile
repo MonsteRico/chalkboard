@@ -1,0 +1,15 @@
+chalkboard.matthewgardner.dev {
+    # Proxy WebSocket connections to backend
+    handle /ws* {
+        reverse_proxy localhost:8100 {
+            # WebSocket support
+            header_up Connection {>Connection}
+            header_up Upgrade {>Upgrade}
+        }
+    }
+
+    # Proxy all other requests to frontend
+    handle {
+        reverse_proxy localhost:8101
+    }
+}
