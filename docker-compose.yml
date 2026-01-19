@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: BackendApp/Dockerfile
+    container_name: chalkboard-backend
+    ports:
+      - "${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}"
+    environment:
+      - PORT=${BACKEND_PORT:-3000}
+    networks:
+      - chalkboard-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ClientApp/Dockerfile
+      args:
+        - VITE_BACKEND_URL=${VITE_BACKEND_URL:-ws://backend:3000}
+    container_name: chalkboard-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - backend
+    networks:
+      - chalkboard-network
+    restart: unless-stopped
+
+networks:
+  chalkboard-network:
+    driver: bridge

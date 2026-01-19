@@ -89,7 +89,13 @@ export function useWebSocket() {
     setConnectionStatus('connecting');
     
     // Connect with roomId in path (cleaner than query params)
-    const ws = new WebSocket(`ws://localhost:3000/ws/${roomId}`);
+    // Use environment variable for backend URL, fallback to localhost:3000 for development
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'ws://localhost:3000';
+    // Ensure the URL uses ws:// or wss:// protocol
+    const wsUrl = backendUrl.startsWith('ws://') || backendUrl.startsWith('wss://') 
+      ? `${backendUrl}/ws/${roomId}`
+      : `ws://${backendUrl}/ws/${roomId}`;
+    const ws = new WebSocket(wsUrl);
     socketRef.current = ws;
 
     ws.onopen = () => {

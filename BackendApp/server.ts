@@ -10,8 +10,10 @@ const userSockets = new Map<string, Map<string, ServerWebSocket<ClientData>>>();
 const shapes = new Map<string, Set<Shape>>();
 
 // server.ts
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
 const server = Bun.serve<ClientData>({
-    port: 3000,
+    port: PORT,
   fetch(req, server) {
     const url = new URL(req.url);
     // Support both /ws and /ws/{roomId} paths
@@ -201,4 +203,4 @@ const server = Bun.serve<ClientData>({
   },
 });
 
-console.log(`Server running on port ${server.port}`);
+console.log(`Server running on port ${server.port} (configured via PORT=${PORT})`);
