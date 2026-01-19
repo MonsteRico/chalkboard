@@ -85,62 +85,72 @@ export function deserializeShapes(shapes: SerializableShape[]): Shape[] {
  */
 export function serializeShape(shape: Shape): SerializableShape {
 	switch (shape.type) {
-		case "circle":
+		case "circle": {
+			const circle = shape as CircleShape;
 			return {
-				id: shape.id,
+				id: circle.id,
 				type: "circle",
-				x: shape.x,
-				y: shape.y,
-				radius: shape.radius,
-				strokeColor: shape.strokeColor,
-				fillColor: shape.fillColor,
+				x: circle.x,
+				y: circle.y,
+				radius: circle.radius,
+				strokeColor: circle.strokeColor,
+				fillColor: circle.fillColor,
 			};
+		}
 
-		case "rectangle":
+		case "rectangle": {
+			const rect = shape as RectangleShape;
 			return {
-				id: shape.id,
+				id: rect.id,
 				type: "rectangle",
-				x: shape.x,
-				y: shape.y,
-				width: shape.width,
-				height: shape.height,
-				strokeColor: shape.strokeColor,
-				fillColor: shape.fillColor,
+				x: rect.x,
+				y: rect.y,
+				width: rect.width,
+				height: rect.height,
+				strokeColor: rect.strokeColor,
+				fillColor: rect.fillColor,
 			};
+		}
 
-		case "triangle":
+		case "triangle": {
+			const triangle = shape as TriangleShape;
 			return {
-				id: shape.id,
+				id: triangle.id,
 				type: "triangle",
-				x: shape.x,
-				y: shape.y,
-				width: shape.width,
-				height: shape.height,
-				strokeColor: shape.strokeColor,
-				fillColor: shape.fillColor,
+				x: triangle.x,
+				y: triangle.y,
+				width: triangle.width,
+				height: triangle.height,
+				strokeColor: triangle.strokeColor,
+				fillColor: triangle.fillColor,
 			};
+		}
 
-		case "diamond":
+		case "diamond": {
+			const diamond = shape as DiamondShape;
 			return {
-				id: shape.id,
+				id: diamond.id,
 				type: "diamond",
-				x: shape.x,
-				y: shape.y,
-				width: shape.width,
-				height: shape.height,
-				strokeColor: shape.strokeColor,
-				fillColor: shape.fillColor,
+				x: diamond.x,
+				y: diamond.y,
+				width: diamond.width,
+				height: diamond.height,
+				strokeColor: diamond.strokeColor,
+				fillColor: diamond.fillColor,
 			};
+		}
 
-		case "path":
+		case "path": {
+			const path = shape as PathShape;
 			return {
-				id: shape.id,
+				id: path.id,
 				type: "path",
-				x: shape.x,
-				y: shape.y,
-				d: shape.d,
-				strokeColor: shape.strokeColor,
-				fillColor: shape.fillColor,
+				x: path.x,
+				y: path.y,
+				d: path.d,
+				strokeColor: path.strokeColor,
+				fillColor: path.fillColor,
 			};
+		}
 	}
 }

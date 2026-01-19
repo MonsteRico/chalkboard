@@ -12,7 +12,6 @@ import { useUpdateCursorPosition } from "./hooks/useUpdateCursorPosition";
 import { useViewBox } from "./hooks/useViewBox";
 import { getCursor, MIDDLE_CLICK } from "./lib/eventHandlers";
 import { ToolsOverlay } from "./ToolsOverlay";
-import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { Settings } from "./components/Settings";
 import { Toaster } from "./components/ui/sonner";
 

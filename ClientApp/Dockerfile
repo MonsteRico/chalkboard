@@ -15,6 +15,10 @@ RUN bun install --frozen-lockfile
 # Copy application code
 COPY ClientApp ./
 
+# Create symlink so shared directory can resolve zod from node_modules
+# This helps TypeScript resolve zod when compiling shared/types/validation.ts
+RUN cd /app/shared && ln -s ../ClientApp/node_modules node_modules 2>/dev/null || true
+
 # Build the application
 RUN bun run build
 
