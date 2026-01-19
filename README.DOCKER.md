@@ -78,6 +78,76 @@ docker-compose restart frontend
 - **Frontend**: Vite app built and served via nginx on port 80 (mapped to host port via `FRONTEND_PORT`)
 - **Network**: Both services communicate via Docker bridge network `chalkboard-network`
 
+## Reverse Proxy Setup (Caddy)
+
+The project includes example Caddy configurations for reverse proxying:
+
+### Using Caddyfile
+
+1. **Set your ports in `.env`:**
+   ```env
+   BACKEND_PORT=3000
+   FRONTEND_PORT=5173
+   ```
+
+2. **Copy and customize `Caddyfile.example`:**
+   ```bash
+   cp Caddyfile.example Caddyfile
+   ```
+
+3. **Update the Caddyfile** with your domain and ports:
+   ```caddy
+   your-domain.com {
+       handle /ws/* {
+           reverse_proxy localhost:3000 {
+               header_up Connection "Upgrade"
+               header_up Upgrade "websocket"
+           }
+       }
+       
+       handle {
+           reverse_proxy localhost:5173
+       }
+   }
+   ```
+
+4. **Start Caddy:**
+   ```bash
+   caddy run
+   ```
+
+### Port Configuration
+
+The Docker containers expose ports that you can configure via `.env`:
+
+- **`BACKEND_PORT`**: Port for backend WebSocket server (default: 3000)
+  - Accessible at `ws://localhost:${BACKEND_PORT}/ws/*`
+  - Use this in Caddy to proxy WebSocket traffic
+
+- **`FRONTEND_PORT`**: Port for frontend HTTP server (default: 5173)
+  - Accessible at `http://localhost:${FRONTEND_PORT}`
+  - Use this in Caddy to proxy HTTP traffic
+
+**Example Caddy configuration** (update ports to match your `.env`):
+```caddy
+chalkboard.example.com {
+    # WebSocket proxy to backend
+    handle /ws/* {
+        reverse_proxy localhost:3000 {
+            header_up Connection "Upgrade"
+            header_up Upgrade "websocket"
+        }
+    }
+    
+    # HTTP proxy to frontend
+    handle {
+        reverse_proxy localhost:5173
+    }
+}
+```
+
+See `Caddyfile.example` for a complete example with comments.
+
 ## Production Deployment
 
 For production deployment:
@@ -86,10 +156,10 @@ For production deployment:
    ```env
    VITE_BACKEND_URL=wss://your-backend-domain.com
    BACKEND_PORT=3000
-   FRONTEND_PORT=80
+   FRONTEND_PORT=5173
    ```
 
-2. **Use a reverse proxy** (nginx, Traefik, etc.) to handle SSL termination
+2. **Set up Caddy reverse proxy** (see above) or use another reverse proxy (nginx, Traefik, etc.) to handle SSL termination
 
 3. **Consider using Docker secrets** for sensitive environment variables
 

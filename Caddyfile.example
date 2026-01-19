@@ -1,0 +1,62 @@
+# Caddy Reverse Proxy Configuration for Chalkboard
+# 
+# This configuration proxies:
+# - HTTP traffic to the frontend (Vite app)
+# - WebSocket traffic (/ws/*) to the backend server
+#
+# Usage:
+# 1. Set BACKEND_PORT and FRONTEND_PORT in your .env file
+# 2. Update the ports below to match your .env values
+# 3. Replace 'chalkboard.example.com' with your actual domain
+# 4. Copy this file to your Caddyfile location
+#
+# Example: If BACKEND_PORT=3000 and FRONTEND_PORT=5173 in .env:
+#   - Frontend: http://localhost:5173
+#   - Backend WebSocket: ws://localhost:3000/ws/*
+
+# Replace with your domain name
+chalkboard.example.com {
+    # Proxy WebSocket connections to backend
+    # Matches /ws/* paths and forwards to backend
+    # IMPORTANT: Update the port (3000) to match your BACKEND_PORT in .env
+    handle /ws/* {
+        reverse_proxy localhost:3000 {
+            # WebSocket upgrade headers (required for WebSocket connections)
+            header_up Connection "Upgrade"
+            header_up Upgrade "websocket"
+            # Preserve the original host
+            header_up Host {host}
+            # Preserve the original request URI
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # Proxy all other HTTP traffic to frontend
+    # IMPORTANT: Update the port (5173) to match your FRONTEND_PORT in .env
+    handle {
+        reverse_proxy localhost:5173 {
+            # Preserve headers
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}
+
+# Alternative: Simple configuration for port 80 (development/testing)
+# Uncomment and adjust ports to match your .env values:
+#
+# :80 {
+#     # WebSocket proxy - update port to match BACKEND_PORT
+#     handle /ws/* {
+#         reverse_proxy localhost:3000 {
+#             header_up Connection "Upgrade"
+#             header_up Upgrade "websocket"
+#         }
+#     }
+#     
+#     # HTTP proxy - update port to match FRONTEND_PORT
+#     handle {
+#         reverse_proxy localhost:5173
+#     }
+# }

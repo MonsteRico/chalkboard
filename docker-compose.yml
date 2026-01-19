@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: BackendApp/Dockerfile
     container_name: chalkboard-backend
+    # Expose backend port - set BACKEND_PORT in .env to customize
+    # This port will be accessible from the host for reverse proxy
     ports:
       - "${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}"
     environment:
@@ -21,6 +23,9 @@ services:
       args:
         - VITE_BACKEND_URL=${VITE_BACKEND_URL:-ws://backend:3000}
     container_name: chalkboard-frontend
+    # Expose frontend port - set FRONTEND_PORT in .env to customize
+    # This port will be accessible from the host for reverse proxy
+    # Maps host port to container's nginx port 80
     ports:
       - "${FRONTEND_PORT:-5173}:80"
     depends_on:
