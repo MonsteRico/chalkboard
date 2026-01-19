@@ -26,7 +26,7 @@ This project uses Docker Compose for easy deployment.
 ## Port Mappings
 
 - **Backend**: Host port `8100` → Container port `3000`
-- **Frontend**: Host port `8101` → Container port `4173` (Vite preview)
+- **Frontend**: Host port `8101` → Container port `80` (nginx)
 
 ## Environment Variables
 
@@ -34,8 +34,8 @@ This project uses Docker Compose for easy deployment.
 - `PORT`: Server port (default: `3000`)
 
 ### Frontend
-- `PORT`: Vite preview port (default: `4173`)
 - `VITE_WS_URL`: WebSocket URL (optional, auto-detected from browser location)
+- Frontend is served statically via nginx (no environment variables needed)
 
 ## Development
 

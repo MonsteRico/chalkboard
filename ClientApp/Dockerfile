@@ -1,4 +1,5 @@
-FROM oven/bun:latest
+# Build stage
+FROM oven/bun:latest AS builder
 
 WORKDIR /app
 
@@ -22,8 +23,23 @@ RUN cd /app/shared && ln -s ../ClientApp/node_modules node_modules 2>/dev/null |
 # Build the application
 RUN bun run build
 
-# Expose port (default 4173 for vite preview, can be overridden via PORT env var)
-EXPOSE 4173
+# Production stage - serve with nginx
+FROM nginx:alpine
 
-# Run vite preview to serve the built app
-CMD ["bun", "run", "preview"]
+# Copy built files from builder
+COPY --from=builder /app/ClientApp/dist /usr/share/nginx/html
+
+# Copy nginx configuration for SPA routing
+RUN echo 'server { \
+    listen 80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

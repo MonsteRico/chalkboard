@@ -18,9 +18,7 @@ services:
       dockerfile: ClientApp/Dockerfile
     container_name: chalkboard-frontend
     ports:
-      - "8101:4173"
-    environment:
-      - PORT=4173
+      - "8101:80"
     depends_on:
       - backend
     restart: unless-stopped
